@@ -76,15 +76,18 @@ const processFlow = addKeyword('proceso')
             return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
         }
     })
-    .addAnswer(`a continuación puedes adjuntar tu CV en los siguientes formatos. (PDF, DOC)`,
+    .addAnswer(`a continuación puedes adjuntar tu CV en los siguientes formatos. (PDF)`,
         {
             capture: true
         },
-        async (ctx, { flowDynamic, state, endFlow }) => {
+        async (ctx, { flowDynamic, state, endFlow, fallBack }) => {
             await state.update({ cv: ctx.body })
             const myState = state.getMyState()
 
             if (ctx.body.toUpperCase() !== 'NO') {
+                if (!ctx.body.includes('_event_document')) {
+                    return fallBack('Recuerda que debes enviar un documento PDF')
+                }
                 await flowDynamic(`Felicidades si llegaste a este paso ${myState.name} tus datos son:\n nombre: ${myState.name} \n documento: ${myState.document} \n whatsapp: ${myState.cel} \n correo: ${myState.email} \n region: ${myState.region} \n ciudad: ${myState.city}`)
             } else {
                 return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
@@ -93,12 +96,11 @@ const processFlow = addKeyword('proceso')
         }
     )
     .addAnswer('Ya tengo todos tus datos para el proceso de selección, muchas gracias👌')
-    .addAnswer('Si quieres recibir un feedback de tu CV, presiona *Feedback*, si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*',
+    .addAnswer('Si quieres recibir un feedback de tu CV, presiona *Feedback*, si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*.',
         {
             buttons: [{body: 'Feedback'}, {body: 'Vacantes'}]
         }, [feedFlow, vacantsFlow]
     )
-
 
 export {
     processFlow,
