@@ -62,7 +62,7 @@ const videoFlow = addKeyword('si')
                 redirect: "follow"
             };
 
-            const responseFile = await fetch(`http://localhost:3000/api/user/upload-video/${id}`, requestOptionsFile)
+            const responseFile = await fetch(`https://dashboard-ofrecetutalento.com:3100/api/user/upload-video/${id}`, requestOptionsFile)
             const dataFile = await responseFile.json()
 
             console.log(dataFile)

@@ -66,16 +66,16 @@ const processFlow = addKeyword('proceso')
             }
         }
     )
-    /*.addAnswer('¿Podrías indicarme la region en la que vives', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
-        await state.update({ region: ctx.body })
+    .addAnswer('¿Podrías indicarme tu correo electronico por favor?', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+        await state.update({ email: ctx.body })
         const myState = state.getMyState()
 
         if (ctx.body.toUpperCase() !== 'NO') {
-            await flowDynamic(`Gracias ${myState.name} ya tengo tu region`)
+            await flowDynamic(`Gracias ${myState.name} ya tengo tu email`)
         } else {
             return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
         }
-    })
+    })/*
     .addAnswer('Ahora, indicame la ciudad en la que vives, por favor 😁', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
         await state.update({ city: ctx.body })
         const myState = state.getMyState()
@@ -100,6 +100,7 @@ const processFlow = addKeyword('proceso')
                 }
                 await flowDynamic(`Felicidades si llegaste a este paso ${myState.name} tus datos son:\n nombre: ${myState.name} \n talentos: ${myState.talents} \n experiencia: ${myState.experience} \n Disponibilidad: ${myState.availability}`)
                 let data = null
+                console.log(ctx)
 
                 //Llamada a la api externa, para guardar todos los datos
                 const myHeaders = new Headers();
@@ -111,6 +112,8 @@ const processFlow = addKeyword('proceso')
                 urlencoded.append("talents", myState.talents);
                 urlencoded.append("experience", myState.experience);
                 urlencoded.append("availability", myState.availability);
+                urlencoded.append("email", myState.email);
+                urlencoded.append("tel", ctx.from);
 
                 const requestOptions = {
                     method: "POST",
@@ -120,10 +123,8 @@ const processFlow = addKeyword('proceso')
                 };
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/user/save-form', requestOptions)
+                    const response = await fetch('https://dashboard-ofrecetutalento.com:3100/api/user/register', requestOptions)
                     data = await response.json()
-
-                    console.log(data)
 
                 } catch (error) {
                     console.log(error.message)
@@ -158,7 +159,8 @@ const processFlow = addKeyword('proceso')
                     })
 
                     //Llamar api externa para guardar CV PDF
-                    const id = data.form._id
+                    console.log(data)
+                    const id = data.user._id
                     const myHeadersFile = new Headers();
                     myHeadersFile.append("Authorization", process.env.JWTAPI);
                     await state.update({ id: id }) 
@@ -176,14 +178,14 @@ const processFlow = addKeyword('proceso')
                         redirect: "follow"
                     };
 
-                    const responseFile = await fetch(`http://localhost:3000/api/user/upload-cv/${id}`, requestOptionsFile)
+                    const responseFile = await fetch(`https://dashboard-ofrecetutalento.com:3100/api/user/upload-pdf/${id}`, requestOptionsFile)
                     const dataFile = await responseFile.json()
 
                     console.log(dataFile)
 
 
                 } catch (error) {
-                    console.error('Error:', error)
+                    console.error('Error: el error es:', error)
                 }
             } else {
                 return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
