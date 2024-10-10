@@ -13,13 +13,14 @@ import { processFlow } from '../flows/process.flow.js'
 import { feedFlow } from '../flows/feedFlow.flow.js'
 import { vacantsFlow } from '../flows/vacantsFlow.flow.js'
 import { videoFlow } from '../flows/videoFlow.flow.js'
+import { sayByeFlow } from '../flows/sayByeFlow.js'
 
 dotenv.config()
 
 const PORT = process.env.PORT ?? 3008
 
 const main = async () => {
-    const adapterFlow = createFlow([flowWelcome, secondFlow, botFlow, processFlow, feedFlow, vacantsFlow, exitFlow, denyFlow, videoFlow])
+    const adapterFlow = createFlow([flowWelcome, secondFlow, botFlow, processFlow, feedFlow, vacantsFlow, exitFlow, denyFlow, videoFlow, sayByeFlow])
     const adapterProvider = createProvider(Provider, {
         jwtToken: process.env.jwtToken,
         numberId: process.env.numberId,

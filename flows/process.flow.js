@@ -4,8 +4,8 @@ import fs from 'fs'
 import * as dotenv from 'dotenv'
 import FormData from 'form-data'
 
-import { feedFlow } from './feedFlow.flow.js'
 import { vacantsFlow } from './vacantsFlow.flow.js'
+import { sayByeFlow } from './sayByeFlow.js'
 
 dotenv.config()
 
@@ -23,7 +23,7 @@ const processFlow = addKeyword('proceso')
         }
 
     })
-    .addAnswer('¿Podrías indicarme cuales son tus talentos? aqui te muestro un ejemplo: ("copywriting, manejo de redes, diseño"), indicame al menos 4 talentos 😁, separados por: ","(coma)', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+    .addAnswer('¿Podrías indicarme cuales son tus talentos? aqui te muestro un ejemplo: ("Finanzas, Mercadeo, Tecnologia, Manejo de redes"), indicame al menos 4 talentos 😁, separados por: ","(coma)', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
         await state.update({ talents: ctx.body })
         const myState = state.getMyState()
 
@@ -66,26 +66,61 @@ const processFlow = addKeyword('proceso')
             }
         }
     )
-    .addAnswer('¿Podrías indicarme tu correo electronico por favor?', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+    .addAnswer('¿Podrías indicarme tu correo electronico por favor? 😊', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
         await state.update({ email: ctx.body })
         const myState = state.getMyState()
 
         if (ctx.body.toUpperCase() !== 'NO') {
-            await flowDynamic(`Gracias ${myState.name} ya tengo tu email`)
+            await flowDynamic(`Gracias ${myState.name} ya tengo tu email 😁`)
         } else {
             return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
         }
-    })/*
-    .addAnswer('Ahora, indicame la ciudad en la que vives, por favor 😁', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+    })
+    .addAnswer('Ahora, indicame el pais en el que vives, por favor 😁', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+        await state.update({ country: ctx.body })
+        const myState = state.getMyState()
+
+        if (ctx.body.toUpperCase() !== 'NO') {
+            await flowDynamic(`Gracias por indicarme tu pais ${myState.name} 👌`)
+        } else {
+            return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
+        }
+    })
+    .addAnswer('Ahora, indicame el distrito en el que vives, por favor 😁', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
         await state.update({ city: ctx.body })
         const myState = state.getMyState()
 
         if (ctx.body.toUpperCase() !== 'NO') {
-            await flowDynamic(`Gracias por indicarme tu ciudad ${myState.name}`)
+            await flowDynamic(`Gracias por indicarme tu distrito ${myState.name} 😊`)
         } else {
             return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
         }
-    })*/
+    })
+    .addAnswer('Ahora, indicame el corregimiento en el que vives, por favor 😁', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+        await state.update({ region: ctx.body })
+        const myState = state.getMyState()
+
+        if (ctx.body.toUpperCase() !== 'NO') {
+            await flowDynamic(`Gracias por indicarme tu corregimiento ${myState.name}`)
+        } else {
+            return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
+        }
+    })
+    .addAnswer('¿Cuentas con permiso de trabajo vigente para este pais?', { capture: true, buttons: [{ body: 'Cuento con él' }, { body: 'No' }] }, async (ctx, { flowDynamic, state }) => {
+        await state.update({ permission: ctx.body })
+        const myState = state.getMyState()
+
+        await flowDynamic(`Gracias tu respuesta ${myState.name} 🙌`)
+    })
+    .addAnswer('¿Hablas  algún otro idioma, a parte del Español?. Si es así, escribe cual o cuales, en caso de que no hables otro idioma, responde con "ninguno" 👍', { capture: true }, async (ctx, { flowDynamic, state, endFlow }) => {
+        await state.update({ languaje: ctx.body })
+
+        if (ctx.body.toUpperCase() !== 'NO') {
+            await flowDynamic(`Gracias por tu respuesta 😊`)
+        } else {
+            return endFlow('Ok, Escribeme cuando quieras iniciar tu proceso de selección 😊, aca te estaré esperando')
+        }
+    })
     .addAnswer(`a continuación puedes adjuntar tu CV en los siguientes formatos. (PDF)`,
         {
             capture: true
@@ -114,6 +149,11 @@ const processFlow = addKeyword('proceso')
                 urlencoded.append("availability", myState.availability);
                 urlencoded.append("email", myState.email);
                 urlencoded.append("tel", ctx.from);
+                urlencoded.append("country", myState.country);
+                urlencoded.append("city", myState.city);
+                urlencoded.append("region", myState.region);
+                urlencoded.append("languaje", myState.languaje);
+                urlencoded.append("permission", myState.permission)
 
                 const requestOptions = {
                     method: "POST",
@@ -163,7 +203,7 @@ const processFlow = addKeyword('proceso')
                     const id = data.user._id
                     const myHeadersFile = new Headers();
                     myHeadersFile.append("Authorization", process.env.JWTAPI);
-                    await state.update({ id: id }) 
+                    await state.update({ id: id })
 
                     const formdataFile = new FormData();
                     const filePath = destino
@@ -194,10 +234,10 @@ const processFlow = addKeyword('proceso')
         }
     )
     .addAnswer('Ya tengo todos tus datos para el proceso de selección, muchas gracias👌')
-    .addAnswer('Si quieres recibir un feedback de tu CV, presiona *Feedback*, si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*.',
+    .addAnswer('Si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*, Si quieres terminar tu proceso de selección aquí, preciona *Terminar*',
         {
-            buttons: [{ body: 'Feedback' }, { body: 'Vacantes' }]
-        }, [feedFlow, vacantsFlow]
+            buttons: [{ body: 'Vacantes' }, { body: 'Terminar' }]
+        }, [sayByeFlow, vacantsFlow]
     )
 
 export {

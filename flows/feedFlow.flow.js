@@ -42,8 +42,6 @@ const feedFlow = addKeyword('feedback')
 
         const response = await chatGptInstance.handleMsgChatGPT(`Este es mi curriculum: ${result}`)
 
-        console.log(result)
-
         const message = response.text
         await flowDynamic(message)
     })
