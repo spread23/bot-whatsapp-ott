@@ -234,7 +234,7 @@ const processFlow = addKeyword('proceso')
         }
     )
     .addAnswer('Ya tengo todos tus datos para el proceso de selección, muchas gracias👌')
-    .addAnswer('Si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*, Si quieres terminar tu proceso de selección aquí, preciona *Terminar*',
+    .addAnswer('Si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*, Si quieres terminar tu proceso de selección aquí, presiona *Terminar*',
         {
             buttons: [{ body: 'Vacantes' }, { body: 'Terminar' }]
         }, [sayByeFlow, vacantsFlow]

@@ -13,7 +13,7 @@ const exitFlow = addKeyword('quiero salir').addAnswer('Ok, escribeme cuando quie
 const chatGptInstance = new ChatGPTClass()
 
 const botFlow = addKeyword('bot')
-    .addAnswer('Hola, Estoy aquí para ayudarte a mejorar tu CV y tus habilidades blandas 😁, Si en algún momento quieres salir de esta conversación y volver al menu principal escribe *QUIERO SALIR* 👌,Preguntame lo que quieras, recuerda que pudes enviarme tu CV en formato PDF y yo te puedo dar consejos de como mejorar tu hoja de via 😁',
+    .addAnswer('Hola, bienvenid@ a Ofrece Tu Talento. Estoy aquí para ayudarte a mejorar tu CV y tus habilidades blandas 😁, Si en algún momento quieres salir de esta conversación y volver al menú principal escribe *QUIERO SALIR* 👌. Recuerda que puedes adjuntar tu CV en un formato PDF para que lo revise.👌',
         {
             capture: true
         },
