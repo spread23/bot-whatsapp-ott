@@ -6,6 +6,7 @@ import FormData from 'form-data'
 
 import { vacantsFlow } from './vacantsFlow.flow.js'
 import { sayByeFlow } from './sayByeFlow.js'
+import { supermarketFlow } from './supermarketFlow.flow.js'
 
 dotenv.config()
 
@@ -234,6 +235,13 @@ const processFlow = addKeyword('proceso')
         }
     )
     .addAnswer('Ya tengo todos tus datos para el proceso de selección, muchas gracias👌')
+    .addAnswer('Una ultima pregunta, vas a postular a vacantes relacionadas con el area de supermercados? si es así presiona *SUPERMERCADOS* en caso contrario, presiona *OTRO GREMIO*', {capture: true, buttons: [{ body: 'Supermercados' }, { body: 'Otro gremio' }]}, async (ctx, { flowDynamic, gotoFlow }) => {
+        if (ctx.body === 'Supermercados') {
+            return gotoFlow(supermarketFlow)
+        }
+
+        await flowDynamic('Ok 😁, continuemos')
+    } )
     .addAnswer('Si quieres ver las vacantes relacionadas con tus talentos, presiona *Vacantes*, Si quieres terminar tu proceso de selección aquí, presiona *Terminar*',
         {
             buttons: [{ body: 'Vacantes' }, { body: 'Terminar' }]
